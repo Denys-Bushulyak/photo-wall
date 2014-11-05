@@ -3,11 +3,9 @@ function build_matrix() {
 
     var matrix = [];
     var items = $('.img_wrap');
-    var margin = $('.img_wrap').css('margin');
+    var margin = $('.img_wrap').css('margin-left');
 
     margin = margin.slice(0, margin.length - 2);
-
-
 
 
     //cols
@@ -59,14 +57,14 @@ function resize() {
             continue;
         }
 
-        if(!matrix[index + 1]){
+        if (!matrix[index + 1]) {
             continue;
         }
 
         var new_width = row_width;
 
-        if(row_width < container_width){
-            do{
+        if (row_width < container_width) {
+            do {
                 matrix[index].push(matrix[index + 1][0]);
 
                 //Удалеям первую ячейку из следующие строки
@@ -74,7 +72,7 @@ function resize() {
 
                 new_width = get_width(matrix[index]);
 
-            }while(new_width <= container_width);
+            } while (new_width <= container_width);
         }
 
         //Сжимаем строку
@@ -128,7 +126,7 @@ $(function () {
         dropzone.innerText = 'Drag & Drop Не поддерживается браузером!';
     }
 
-    dropzone.ondragover = $('#dropzone').d[0].ondragenter = function (event) {
+    dropzone.ondragover = dropzone.ondragenter = function (event) {
         event.stopPropagation();
         event.preventDefault();
     };
@@ -142,16 +140,20 @@ $(function () {
             uploadFile(event.dataTransfer.files).done(function (response) {
                 var els = [];
                 for (var index in response.files) {
-                    els.push($('<div class="img_wrap"><img src="' + '/images/' + response.files[index] + '"/></div>'));
+
+                    var wrap = $('<div class="img_wrap">');
+
+                    var image = $('<img src="/images/' + response.files[index] + '"/>').load(resize);
+
+                    wrap.append(image);
+
+                    els.push(wrap);
                 }
                 if (els.length > 0) {
                     $('#wall').append(els);
                 }
 
                 console && console.log("Uploaded and appended to DOM");
-                setTimeout(function(){
-                    resize();
-                },50);
             });
         } catch (e) {
             var messages = document.getElementById('messages');
